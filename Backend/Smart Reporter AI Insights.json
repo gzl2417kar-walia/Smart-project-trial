@@ -1,0 +1,102 @@
+{
+  "name": "Smart Reporter AI Insights",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            },
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -80,
+        0
+      ],
+      "id": "94190239-4d18-464b-a6e9-d2786a16bac8",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://your-project.supabase.co/rest/v1/kpi_metrics?select=*",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "YOUR_SUPABASE_ANON_KEY"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_SUPABASE_ANON_KEY"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        128,
+        -32
+      ],
+      "id": "33141aae-f86e-4f42-8f04-69d8386c1da5",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\n\nlet insight = \"\";\n\nif (data.missed_calls > 5) {\ninsight = \"Missed calls are increasing. Consider improving staffing coverage.\";\n} else if (data.avg_csat < 90) {\ninsight = \"Customer satisfaction has dropped. Review support quality trends.\";\n} else {\ninsight = \"Operational performance is stable with healthy KPI trends.\";\n}\n\nreturn [\n{\njson: {\ninsight_text: insight,\ntotal_calls: data.total_calls,\nactive_agents: data.active_agents,\navg_csat: data.avg_csat\n}\n}\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        352,
+        0
+      ],
+      "id": "2c151d51-a093-47d6-8ed2-5758cec21831",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "9bded78f-fc6f-4446-827b-f2f4f8752c5f",
+  "meta": {
+    "instanceId": "8a43732234047462689742966e39b0b0adacf86eaddca449be8062f006f72c95"
+  },
+  "nodeGroups": [],
+  "id": "RvFANyFWCbAaRJh1",
+  "tags": []
+}

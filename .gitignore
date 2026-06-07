@@ -1,0 +1,9 @@
+# Environment files
+.env
+.env.*
+Frontend/.env
+Frontend/.env.*
+
+# OS / editor artifacts
+.DS_Store
+.vscode/
